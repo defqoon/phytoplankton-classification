@@ -7,27 +7,22 @@ import {
     ProbabilityPrediction,
     SVCParameters,
     SVCResult,
-    uploadresults
+    uploadresults,
+    test
 } from "./types";
 
 const SERVER_URL: string = 'api/';
 
 @Injectable()
-export class IrisService {
+export class Service {
 
     constructor(private http: Http) {
     }
 
-    public trainModel(svcParameters: SVCParameters): Observable<SVCResult> {
-        return this.http.post(`${SERVER_URL}train`, svcParameters).map((res) => res.json());
+    public predict(urls: any){
+        return this.http.post(`${SERVER_URL}predict`, urls).map((res) => res.json());
     }
-    // TODO @Thomas change here for predictions
-    public predictIris(iris: Iris): Observable<ProbabilityPrediction[]> {
-        return this.http.post(`${SERVER_URL}predict`, iris).map((res) => res.json());
-    }
-    public sendImage(file: File){
-        return this.http.post(`${SERVER_URL}upload`, file);
-    }
+
 
 }
 

@@ -5,6 +5,9 @@ export class Iris {
     petalWidth: number = 1.2;
 }
 
+export class test {
+}
+
 export class ProbabilityPrediction {
     name: string;
     value: number;

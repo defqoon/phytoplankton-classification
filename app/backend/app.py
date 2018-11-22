@@ -1,3 +1,7 @@
+import io
+import base64
+from PIL import Image
+
 from flask import Flask, request, jsonify
 from sklearn import svm
 from sklearn import datasets
@@ -34,19 +38,11 @@ def train():
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
-    # get iris object from request
     X = request.get_json()
-    X = [[float(X['sepalLength']), float(X['sepalWidth']), float(X['petalLength']), float(X['petalWidth'])]]
-
-    # read model
-    clf = joblib.load('model.pkl')
-    probabilities = clf.predict_proba(X)
-
-    return jsonify([{'name': 'Iris-Setosa', 'value': round(probabilities[0, 0] * 100, 2)},
-                    {'name': 'Iris-Versicolour', 'value': round(probabilities[0, 1] * 100, 2)},
-                    {'name': 'Iris-Virginica', 'value': round(probabilities[0, 2] * 100, 2)},
-                    {'name': 'Test', 'value': 10.05},
-                    {'name': 'Test2', 'value': 20.86}])
+    head, data = X[0].split(',')
+    image = Image.open(io.BytesIO(base64.b64decode(data)))
+    return jsonify([{"class": "phyto1"},
+                    {"class": "phyto2"}])
 
 
 @app.route('/api/upload', methods=['POST'])

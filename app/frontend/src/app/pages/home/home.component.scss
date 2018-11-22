@@ -3,5 +3,45 @@ $chart-width: 600px;
 .home__chart-container {
     min-height: $chart-min-height;
     width: $chart-width;
-    max-width: 100%;
+    max-width: 200%;
 }
+.image {
+display: block;
+}
+.container {
+    position: relative;
+}
+.container:hover .overlay {
+    opacity: 1;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+    // grid-auto-rows: 100px;
+  }
+
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .5s ease;
+    background-color: #008CBA;
+}
+.text {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
