@@ -10,7 +10,7 @@ import {AppComponent} from './app.component';
 import {SharedModule} from "./shared/shared.module";
 import {ROUTES} from "./app.routes";
 import {HomeComponent} from "./pages/home/home.component";
-import {Service} from "./pages/home/iris.service";
+import {Service} from "./pages/home/service";
 
 @NgModule({
     declarations: [

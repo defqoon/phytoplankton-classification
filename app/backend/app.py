@@ -1,6 +1,7 @@
 import io
 import base64
 from PIL import Image
+import numpy as np
 
 from flask import Flask, request, jsonify
 from sklearn import svm
@@ -15,41 +16,21 @@ PORT = 8081
 app = Flask(__name__)
 
 
-@app.route('/api/train', methods=['POST'])
-def train():
-    # get parameters from request
-    parameters = request.get_json()
-
-    # read iris data set
-    iris = datasets.load_iris()
-    X, y = iris.data, iris.target
-
-    # fit model
-    clf = svm.SVC(C=float(parameters['C']),
-                  probability=True,
-                  random_state=1)
-    clf.fit(X, y)
-
-    # persist model
-    joblib.dump(clf, 'model.pkl')
-
-    return jsonify({'accuracy': round(clf.score(X, y) * 100, 2)})
-
-
 @app.route('/api/predict', methods=['POST'])
 def predict():
     X = request.get_json()
-    head, data = X[0].split(',')
-    image = Image.open(io.BytesIO(base64.b64decode(data)))
-    return jsonify([{"class": "phyto1"},
-                    {"class": "phyto2"}])
-
-
-@app.route('/api/upload', methods=['POST'])
-def upload():
-    print('Thomas')
-    return jsonify({'success': "True"})
-
+    results = []
+    for array in X:
+        tmp = {}
+        head, data = array[0].split(',')
+        tmp["name'"] = array[1]
+        image = np.array(Image.open(io.BytesIO(base64.b64decode(data))))
+        tmp["height"] = int(image.shape[0])
+        tmp["width"] = int(image.shape[1])
+        tmp["confidence"] = float(np.random.rand())
+        results.append(tmp)
+    return jsonify(results)
+    # return jsonify([{"test": "test"}])
 
 if __name__ == '__main__':
     # run web server

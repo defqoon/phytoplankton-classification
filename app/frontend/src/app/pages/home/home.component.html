@@ -3,15 +3,19 @@
 
     <div>
 
-        <md-card fxLayoutAlign="center center" fxLayout="row">            
+        <md-card fxLayoutAlign="center center" fxLayout="row" style="height: 500px; overflow-y: auto">            
             <div class="wrapper">
                 <div *ngFor='let url of urls' class="container">
-                    <img [src]="url" height="200" width="100">
+                    <img [src]="url[0]" height="200" width="100">
                     <div class="overlay">
-                        <div class="text">THOMAS</div>
+                        <div class="text">
+                            <p>name : {{url[1]}}</p>
+                            <p>height: {{url[2]}}</p>
+                            <p>width: {{url[3]}}</p>
+                            <p>confidence: {{url[4]}}</p>
+                        </div>
                     </div>
                 </div>
-                <!-- <img *ngFor='let url of urls'  [src]="url" height="200" width="100"> <br/> -->
             </div>
         </md-card>
 
@@ -21,11 +25,8 @@
         
         <md-card fxLayoutAlign="center center" fxLayout="row" fxLayoutGap="20px">         
                 <button md-raised-button (click)="predict()" >2 - Predict species</button> 
-                <!-- <a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json">Truc</a> -->
+                <!-- <button md-raised-button (click)="downloadJsonHref" download="download.json" >2 - Predict species</button>  -->
                 <a class=md-raised-button title="Download JSON" [href]="downloadJsonHref" download="download.json">Test</a>
-
-                <!-- <button md-raised-button (click)="exportJson()" [href]="downloadJsonHref" download="download.json">3 - Save results</button>  -->
-                <!-- (click)="predictIris()" -->
         </md-card>
     </div>
 </div>

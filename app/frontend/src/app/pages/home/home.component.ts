@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
-import {Service} from "./iris.service";
+import {Service} from "./service";
 import {
     Iris,
     ProbabilityPrediction,
@@ -20,11 +20,13 @@ export class HomeComponent implements OnInit {
     public svcParameters: SVCParameters = new SVCParameters();
     public svcResult: SVCResult;
     public iris: Iris = new Iris();
-    public probabilityPredictions: ProbabilityPrediction[];
+    // public probabilityPredictions: ProbabilityPrediction[];
+    public probabilityPredictions: any;
     public selectedFile: File;
     public uploadr: uploadresults;
     public stepsModel = [];
     public downloadJsonHref: any;
+    public results = [];
 
     // graph styling
     public colorScheme = {
@@ -42,31 +44,32 @@ export class HomeComponent implements OnInit {
         if (event.target.files && event.target.files[0]) {
             var filesAmount = event.target.files.length;
             for (let i = 0; i < filesAmount; i++) {
-                    var reader = new FileReader();
-
+                var reader = new FileReader();
+                const name = event.target.files[i].name
                 reader.onload = (event) => {
                     const tempEvent = event as any;
-                    console.log(tempEvent.target);
-                    this.urls.push(tempEvent.target.result);
+                    this.urls.push([tempEvent.target.result, name])
                 }
-                        console.log(event.target.files[i]);
-
-                    reader.readAsDataURL(event.target.files[i]);
+                reader.readAsDataURL(event.target.files[i]);
             }
         }
     }
     
-    public predict() {
-        console.log(this.urls)
-        this.Service.predict(this.urls).subscribe((probabilityPredictions) => {
-            this.probabilityPredictions = probabilityPredictions;
-        });
+    public async predict() {
+        //  https://stackoverflow.com/questions/43953007/angular-2-wait-for-method-observable-to-complete?rq=1
+        // batch size of 1    
+        for (let i = 0; i < this.urls.length; i++) {
+            this.probabilityPredictions = await this.Service.predict([this.urls[i]]);
+            this.urls[i].push(this.probabilityPredictions[0]["height"])
+            this.urls[i].push(this.probabilityPredictions[0]["width"])
+            this.urls[i].push(this.probabilityPredictions[0]["confidence"])
+            this.results.push(this.probabilityPredictions[0])
+        }
         this.exportJson();
     }
     
     public exportJson() {
-        console.log(this.probabilityPredictions);
-        var theJSON = JSON.stringify(this.probabilityPredictions);
+        var theJSON = JSON.stringify(this.results);
         var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
         this.downloadJsonHref = uri;
     }
