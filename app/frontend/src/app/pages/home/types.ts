@@ -5,6 +5,10 @@ export class Iris {
     petalWidth: number = 1.2;
 }
 
+export interface Model {
+    value: string;
+    viewValue: string;
+}
 export class test {
 }
 

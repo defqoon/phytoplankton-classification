@@ -6,7 +6,8 @@ import {
     ProbabilityPrediction,
     SVCParameters,
     SVCResult,
-    uploadresults
+    uploadresults,
+    Model
 } from "./types";
 
 @Component({
@@ -27,11 +28,14 @@ export class HomeComponent implements OnInit {
     public stepsModel = [];
     public downloadJsonHref: any;
     public results = [];
-
+    public urls = [];
+    public success: any;
+    public models = ["Phaeocystis antarctica versus all", "All species"];
     // graph styling
     public colorScheme = {
         domain: ['#1a242c', '#e81746', '#e67303', '#FF0000', '#6FFF00']
     };
+    public selectedModel = this.models[0];
 
     constructor(private Service: Service, private sanitizer: DomSanitizer) {
     }
@@ -39,8 +43,16 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
     }
 
-    public urls = [];
-    onSelectFile(event) {
+    public async loadModel(event) {
+        this.selectedModel = event.target.value;
+        console.log(this.selectedModel);
+        this.success = await this.Service.loadModel([this.selectedModel]);
+    }
+
+
+    public onSelectFile(event) {
+        this.urls = [];
+        // this.urls.push(this.selectedModel)
         if (event.target.files && event.target.files[0]) {
             var filesAmount = event.target.files.length;
             for (let i = 0; i < filesAmount; i++) {
@@ -60,10 +72,12 @@ export class HomeComponent implements OnInit {
         // batch size of 1    
         for (let i = 0; i < this.urls.length; i++) {
             this.probabilityPredictions = await this.Service.predict([this.urls[i]]);
+            console.log(this.probabilityPredictions)
             this.urls[i].push(this.probabilityPredictions[0]["height"])
             this.urls[i].push(this.probabilityPredictions[0]["width"])
-            this.urls[i].push(this.probabilityPredictions[0]["confidence"])
-            this.results.push(this.probabilityPredictions[0])
+            this.urls[i].push(this.probabilityPredictions[0]["scores"][0])
+            this.urls[i].push(this.probabilityPredictions[0]["classes"][0])
+            this.results.push(this.probabilityPredictions)
         }
         this.exportJson();
     }
@@ -72,6 +86,17 @@ export class HomeComponent implements OnInit {
         var theJSON = JSON.stringify(this.results);
         var uri = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
         this.downloadJsonHref = uri;
+    }
+    
+    public downloadJson(){
+        var sJson = JSON.stringify(this.results);
+        var element = document.createElement('a');
+        element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));
+        element.setAttribute('download', "primer-server-task.json");
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click(); // simulate click
+        document.body.removeChild(element);
     }
 
 }

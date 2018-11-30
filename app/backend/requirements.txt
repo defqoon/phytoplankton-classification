@@ -1,4 +1,7 @@
 flask
+Keras
 numpy
+scikit-image
 scikit-learn[alldeps]
+tensorflow
 Pillow

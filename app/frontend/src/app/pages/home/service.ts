@@ -21,14 +21,13 @@ export class Service {
     constructor(private http: Http) {
     }
 
-    // public predict(urls: any){
-    //     return this.http.post(`${SERVER_URL}predict`, urls).map((res) => res.json());
-    // }
     public async predict(urls: any){
         return await this.http.post(`${SERVER_URL}predict`, urls).map((res) => res.json()).toPromise();
     }
-
-
+    public async loadModel(modelType: any){
+        console.log(modelType)
+        return await this.http.post(`${SERVER_URL}load_model`, modelType).map((res) => res.json()).toPromise();
+    }
 }
 
 
